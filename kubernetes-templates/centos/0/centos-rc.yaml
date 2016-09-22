@@ -2,18 +2,20 @@ apiVersion: v1
 kind: ReplicationController
 metadata:
   name: centos
-  labels:
-    provider: centos
-    heritage: helm
 spec:
   replicas: ${REPLICAS}
+  selector:
+    os: centos
   template:
     metadata:
       labels:
-        provider: centos
+        os: centos
     spec:
+      restartPolicy: Always
       containers:
       - name: centos
-        image: centos:7
-        ports:
-        - containerPort: 5672
+        image: centos
+        command:
+          - sleep
+          - "360"
+        imagePullPolicy: Always

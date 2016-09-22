@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: Apache
+  name: apache
 spec:
   replicas: ${REPLICAS}
   selector:
@@ -13,6 +13,6 @@ spec:
     spec:
       restartPolicy: Always
       containers:
-      - name: httpd
+      - name: apache
         image: httpd
         imagePullPolicy: Always

@@ -1,7 +1,7 @@
 .catalog:
-  name: CentOS
-  version: 7
-  description: Base CentOS 7 image used for testing
+  name: Apache
+  version: 2.4
+  description: Base Apache web server image
   questions:
     - variable: REPLICAS
       default: 1

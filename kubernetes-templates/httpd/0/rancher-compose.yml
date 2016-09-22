@@ -1,0 +1,13 @@
+.catalog:
+  name: CentOS
+  version: 7
+  description: Base CentOS 7 image used for testing
+  questions:
+    - variable: REPLICAS
+      default: 1
+      min: 1
+      max: 10
+      label: Server Replicas
+      description: Initial number of server replicas
+      required: true
+      type: int

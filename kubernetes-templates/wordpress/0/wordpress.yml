@@ -29,17 +29,23 @@ spec:
         app: mysql-${cluster_name}
     spec:
       containers:
-      - image: mysql:5.6
+      - image: mysql:5.7
         name: mysql
         env:
-          # kubectl create secret generic mysql-pass --from-file=password.txt
-          # make sure password.txt does not have a trailing newline
-        - name: MYSQL_ROOT_PASSWORD
-          value: "${admin_password}"
-          # valueFrom:
-          #   secretKeyRef:
-          #     name: mysql-pass
-          #     key: password
+            # kubectl create secret generic mysql-pass --from-file=password.txt
+            # make sure password.txt does not have a trailing newline
+          - name: MYSQL_ROOT_PASSWORD
+            value: "${admin_password}"
+          - name: MYSQL_USER
+            value: "${admin_user}"
+          - name: MYSQL_PASSWORD
+            value: "${admin_password}"
+          - name: MYSQL_DATABASE
+            value: "wp"
+            # valueFrom:
+            #   secretKeyRef:
+            #     name: mysql-pass
+            #     key: password
         ports:
         - containerPort: 3306
           name: mysql
@@ -57,7 +63,7 @@ spec:
         - name: mysql
           nfs:
             server: 10.5.36.50
-            path: "/nfs/exports/kube-mysql-1"
+            path: "/nfs/exports/kube-mysql-${cluster_name}"
             readOnly: false
 ---
 apiVersion: v1
@@ -95,7 +101,9 @@ spec:
         name: wordpress-${cluster_name}
         env:
         - name: WORDPRESS_DB_HOST
-          value: mysql
+          value: mysql-${cluster_name}
+        - name: WORDPRESS_DB_USER
+          value: "${admin_user}"
         - name: WORDPRESS_DB_PASSWORD
           value: "${admin_password}"
         ports:
@@ -108,7 +116,7 @@ spec:
         - name: wordpress
           nfs:
             server: 10.5.36.50
-            path: "/nfs/exports/kube-wordpress-1"
+            path: "/nfs/exports/kube-wordpress-${cluster_name}"
             readOnly: false
 ---
 apiVersion: extensions/v1beta1

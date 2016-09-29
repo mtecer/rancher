@@ -1,6 +1,6 @@
 .catalog:
   name: "Wordpress"
-  version: 7
+  version: 4.4-apache
   description: "Blog tool, publishing platform and CMS"
   uuid: Wordpress-0
   minimum_rancher_version: v0.51.0

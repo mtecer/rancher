@@ -1,0 +1,6 @@
+name: WordPress
+maintainer: Mehmet Tecer <mtecer@netsuite.com>
+description: |
+  Blog tool, publishing platform and CMS
+version: 4.5
+category: Blogging

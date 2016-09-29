@@ -1,0 +1,133 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-${cluster_name}
+  labels:
+    app: mysql-${cluster_name}
+spec:
+  ports:
+  - name: mysql
+    port: 3306
+    targetPort: 3306
+    protocol: TCP
+  selector:
+    app: mysql-${cluster_name}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mysql-${cluster_name}
+  labels:
+    app: mysql-${cluster_name}
+spec:
+  strategy:
+    type: RollingUpdate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql-${cluster_name}
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        env:
+          # kubectl create secret generic mysql-pass --from-file=password.txt
+          # make sure password.txt does not have a trailing newline
+        - name: MYSQL_ROOT_PASSWORD
+          value: "${admin_password}"
+          # valueFrom:
+          #   secretKeyRef:
+          #     name: mysql-pass
+          #     key: password
+        ports:
+        - containerPort: 3306
+          name: mysql
+      #   volumeMounts:
+      #   - name: mysql-persistent-storage
+      #     mountPath: /var/lib/mysql
+      # volumes:
+      # - name: mysql-persistent-storage
+      #   persistentVolumeClaim:
+      #     claimName: mysql-pv-claim
+        volumeMounts:
+          - name: mysql
+            mountPath: "/var/lib/mysql"
+      volumes:
+        - name: mysql
+          nfs:
+            server: 10.5.36.50
+            path: "/nfs/exports/kube-mysql-1"
+            readOnly: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-${cluster_name}
+  labels:
+    app: wordpress-${cluster_name}
+spec:
+  ports:
+  - name: wordpress
+    port: 80
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: wordpress-${cluster_name}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: wordpress-${cluster_name}
+  labels:
+    app: wordpress-${cluster_name}
+spec:
+  strategy:
+    type: RollingUpdate
+  replicas: ${wordpress_replicas}
+  template:
+    metadata:
+      labels:
+        app: wordpress-${cluster_name}
+    spec:
+      containers:
+      - image: wordpress:4.4-apache
+        name: wordpress-${cluster_name}
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: mysql
+        - name: WORDPRESS_DB_PASSWORD
+          value: "${admin_password}"
+        ports:
+        - containerPort: 80
+          name: wordpress
+        volumeMounts:
+          - name: wordpress
+            mountPath: "/var/www/html"
+      volumes:
+        - name: wordpress
+          nfs:
+            server: 10.5.36.50
+            path: "/nfs/exports/kube-wordpress-1"
+            readOnly: false
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: wordpress-lb-${cluster_name}
+  annotations:
+    scale: "1"
+    http.port: "80"
+spec:
+  backend:
+    serviceName: wordpress-${cluster_name}
+    servicePort: 80
+
+# kubectl scale deployment/wordpress --replicas=4
+# kubectl set image deployment/wordpress wordpress=wordpress:4.5-apache
+# kubectl set image deployment/wordpress wordpress=wordpress:4.6.1-apache
+# kubectl rollout status deployment/wordpress
+# kubectl rollout undo deployment/wordpress
+# kubectl rollout undo deployment/wordpress --revision=1
+# kubectl rollout history deployment/wordpress
+# kubectl rollout history deployment/wordpress --revision=3

@@ -62,7 +62,7 @@ spec:
       volumes:
         - name: mysql
           nfs:
-            server: 10.5.36.50
+            server: ${nfs_server_ip}
             path: "/nfs/exports/kube-mysql-${cluster_name}"
             readOnly: false
 ---
@@ -115,7 +115,7 @@ spec:
       volumes:
         - name: wordpress
           nfs:
-            server: 10.5.36.50
+            server: ${nfs_server_ip}
             path: "/nfs/exports/kube-wordpress-${cluster_name}"
             readOnly: false
 ---
@@ -125,7 +125,7 @@ metadata:
   name: wordpress-lb-${cluster_name}
   annotations:
     scale: "1"
-    http.port: "80"
+    http.port: "${wordpress_port}"
 spec:
   backend:
     serviceName: wordpress-${cluster_name}

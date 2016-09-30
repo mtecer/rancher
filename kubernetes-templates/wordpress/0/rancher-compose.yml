@@ -2,7 +2,6 @@
   name: "Wordpress"
   version: 4.4-apache
   description: "Blog tool, publishing platform and CMS"
-  uuid: Wordpress-0
   minimum_rancher_version: v0.51.0
   questions:
     - variable: cluster_name
@@ -19,21 +18,27 @@
       description: "Initial number of WordPress replicas"
       required: true
       type: int
-    - variable: http_port
-      description: "http port to access Grafana"
-      label: "Http Port"
+    - variable: wordpress_port
+      description: "HTTP port to access WordPress"
+      label: "WordPress Port"
       required: true
-      default: "3000"
+      default: "80"
       type: "int"
     - variable: admin_username
       description: "MySQL Admin Username"
-      label: "Admin Username"
+      label: "Admin Username for WordPress"
       required: true
       default: "admin"
       type: "string"
     - variable: admin_password
       description: "MySQL Admin Password"
-      label: "Admin Password"
+      label: "Admin Password for WordPress"
       required: true
       default: "password"
+      type: "string"
+    - variable: nfs_server_ip
+      description: "NFS Server IP Address"
+      label: "NFS Server IP Address"
+      required: true
+      default: "10.5.36.50"
       type: "string"

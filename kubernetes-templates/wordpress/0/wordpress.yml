@@ -106,6 +106,8 @@ spec:
           value: "${admin_user}"
         - name: WORDPRESS_DB_PASSWORD
           value: "${admin_password}"
+        - name: WORDPRESS_DB_NAME
+          value: "wp"
         ports:
         - containerPort: 80
           name: wordpress

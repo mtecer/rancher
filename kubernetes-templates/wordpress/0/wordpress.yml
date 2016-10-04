@@ -131,11 +131,18 @@ spec:
     serviceName: wordpress-${cluster_name}
     servicePort: 80
 
+# kubectl create -f wordpress.yaml --record
+# kubectl get deployments
+# kubectl get rs
+# kubectl get pods --show-labels
 # kubectl scale deployment/wordpress --replicas=4
+# kubectl edit deployment/wordpress
 # kubectl set image deployment/wordpress wordpress=wordpress:4.5-apache
 # kubectl set image deployment/wordpress wordpress=wordpress:4.6.1-apache
+# kubectl rollout pause deployment/wordpress
+# kubectl rollout resume deployment/wordpress
 # kubectl rollout status deployment/wordpress
 # kubectl rollout undo deployment/wordpress
-# kubectl rollout undo deployment/wordpress --revision=1
+# kubectl rollout undo deployment/wordpress --to-revision=1
 # kubectl rollout history deployment/wordpress
 # kubectl rollout history deployment/wordpress --revision=3
